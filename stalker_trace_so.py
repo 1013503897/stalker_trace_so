@@ -30,15 +30,14 @@ var print_stack = false;
 var print_stack_mode = "FUZZY";
 
 function addr_in_so(addr){
-    var process_Obj_Module_Arr = Process.enumerateModules();
-    for(var i = 0; i < process_Obj_Module_Arr.length; i++) {
-        if(addr>process_Obj_Module_Arr[i].base && addr<process_Obj_Module_Arr[i].base.add(process_Obj_Module_Arr[i].size)){
-            console.log(addr.toString(16),"is in",process_Obj_Module_Arr[i].name,"offset: 0x"+(addr-process_Obj_Module_Arr[i].base).toString(16));
+    for (const module of Process.enumerateModules()) {
+        if (addr.compare(module.base) >= 0 && addr.compare(module.base.add(module.size)) < 0) {
+            console.log(addr.toString(16), "is in", module.name, "offset: 0x" + addr.sub(module.base).toString(16));
         }
     }
 }
 function hook_dlopen() {
-    Interceptor.attach(Module.findExportByName(null, "android_dlopen_ext"),
+    Interceptor.attach(Process.getModuleByName('libc.so').getExportByName('android_dlopen_ext'),
         {
             onEnter: function (args) {
                 var pathptr = args[0];

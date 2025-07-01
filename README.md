@@ -1,5 +1,7 @@
 # stalker_trace_so
 
+> **适配 Frida 17 版本的 API 变更**
+
 一个IDA插件，利用frida-stalker在加载so时打印出所有函数调用，解决frida-trace无法在so加载时trace的问题
 
 # 使用
